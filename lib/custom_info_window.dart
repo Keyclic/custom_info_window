@@ -1,6 +1,7 @@
 /// A widget based custom info window for google_maps_flutter package.
 library custom_info_window;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -71,23 +72,13 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> {
 
   /// Calculate the position on [CustomInfoWindow] and redraw on screen.
   void _updateInfoWindow() async {
-    if (_latLng == null ||
-        _child == null ||
-        _offset == null ||
-        _height == null ||
-        _width == null ||
-        widget.controller.googleMapController == null) {
+    if (_latLng == null || _child == null || _offset == null || _height == null || _width == null || widget.controller.googleMapController == null) {
       return;
     }
-    ScreenCoordinate screenCoordinate = await widget
-        .controller.googleMapController!
-        .getScreenCoordinate(_latLng!);
-    double devicePixelRatio =
-        Theme.of(context).platform == TargetPlatform.android ? MediaQuery.of(context).devicePixelRatio : 1.0;
-    double left =
-        (screenCoordinate.x.toDouble() / devicePixelRatio) - (_width! / 2);
-    double top = (screenCoordinate.y.toDouble() / devicePixelRatio) -
-        (_offset! + _height!);
+    ScreenCoordinate screenCoordinate = await widget.controller.googleMapController!.getScreenCoordinate(_latLng!);
+    double devicePixelRatio = !kIsWeb && Theme.of(context).platform == TargetPlatform.android ? MediaQuery.of(context).devicePixelRatio : 1.0;
+    double left = (screenCoordinate.x.toDouble() / devicePixelRatio) - (_width! / 2);
+    double top = (screenCoordinate.y.toDouble() / devicePixelRatio) - (_offset! + _height!);
     setState(() {
       _showNow = true;
       _leftMargin = left;
@@ -130,12 +121,7 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> {
       left: _leftMargin,
       top: _topMargin,
       child: Visibility(
-        visible: (_showNow == false ||
-                (_leftMargin == 0 && _topMargin == 0) ||
-                _child == null ||
-                _latLng == null)
-            ? false
-            : true,
+        visible: (_showNow == false || (_leftMargin == 0 && _topMargin == 0) || _child == null || _latLng == null) ? false : true,
         child: Container(
           child: _child,
           height: _height,
